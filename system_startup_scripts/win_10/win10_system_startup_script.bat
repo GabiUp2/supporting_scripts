@@ -1,5 +1,13 @@
 @echo off
 
+echo Upgrading Chocolatey...
+choco upgrade chocolatey -y
+if %ERRORLEVEL% EQU 0 (
+    echo Chocolatey upgrade completed successfully.
+) else (
+    echo Chocolatey upgrade failed with error code %ERRORLEVEL%.
+)
+
 echo Upgrading Chocolatey packages...
 choco upgrade all -y
 if %ERRORLEVEL% EQU 0 (
