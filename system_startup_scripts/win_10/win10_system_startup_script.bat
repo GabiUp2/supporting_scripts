@@ -1,3 +1,5 @@
+:: This file should be placed in windows strartup folder, search (Win+R) for 'shell:startup'.
+
 @echo off
 :: Check if we have administrative privileges, prompt for them if not
 net session >nul 2>&1
