@@ -1,5 +1,5 @@
 @echo off
-:: Check if we have administrative privileges
+:: Check if we have administrative privileges, prompt for them if not
 net session >nul 2>&1
 if %errorLevel% == 0 (
     goto :gotAdmin
@@ -14,6 +14,14 @@ echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
 exit /B
 
 :gotAdmin
+
+:: Check if Chocolatey is installed, install if not
+choco --version >nul 2>&1
+if %errorLevel% NEQ 0 (
+    echo Installing Chocolatey...
+    powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+)
+
 echo Upgrading Chocolatey...
 choco upgrade chocolatey -y
 if %ERRORLEVEL% EQU 0 (
@@ -28,6 +36,14 @@ if %ERRORLEVEL% EQU 0 (
     echo Chocolatey upgrade completed successfully.
 ) else (
     echo Chocolatey upgrade failed with error code %ERRORLEVEL%.
+)
+
+:: Check if Python is installed, exit if not
+python --version >nul 2>&1
+if %errorLevel% NEQ 0 (
+    echo Python is not installed. Exiting.
+    pause
+    exit /B
 )
 
 echo Upgrading pip...
