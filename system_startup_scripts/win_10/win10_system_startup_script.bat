@@ -1,5 +1,19 @@
 @echo off
+:: Check if we have administrative privileges
+net session >nul 2>&1
+if %errorLevel% == 0 (
+    goto :gotAdmin
+) else (
+    goto :UACPrompt
+)
 
+:UACPrompt
+echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+"%temp%\getadmin.vbs"
+exit /B
+
+:gotAdmin
 echo Upgrading Chocolatey...
 choco upgrade chocolatey -y
 if %ERRORLEVEL% EQU 0 (
